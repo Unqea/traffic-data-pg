@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.traffic.mapper.OdpsMapper">
+
+    <select id="showTables" resultType="com.traffic.entity.IndexTableNames">
+        SELECT
+            table_name,
+            table_comment
+        FROM
+            information_schema.TABLES
+        WHERE
+            table_name like #{tablePre}
+    </select>
+
+    <!--查询表前缀-->
+    <select id="selectTablePre" resultType="string">
+        SELECT * FROM index_table_pre
+    </select>
+</mapper>

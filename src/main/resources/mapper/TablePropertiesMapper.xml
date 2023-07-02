@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.traffic.mapper.TablePropertiesMapper">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, table_name, table_alias, table_keywords, table_scenario, upstream_tables, update_frequency, table_description, table_type, creation_time, update_time
+    </sql>
+
+    <select id="getTablePropertiesById" resultType="com.traffic.vo.TablePropertiesQueryVo">
+        select
+        <include refid="Base_Column_List"/>
+        from table_properties where id = #{id}
+    </select>
+
+    <!--分页查询-->
+    <select id="getTablePropertiesPageList" resultType="com.traffic.entity.TableProperties" parameterType="com.traffic.param.TablePropertiesQueryParam">
+        SELECT
+            id, table_name, table_alias, table_keywords, table_scenario, upstream_tables, update_frequency, table_description, table_type, creation_time, update_time
+        FROM
+            (SELECT * FROM table_properties) as t1
+        <where>
+            <if test="param.tableKeywords != null and param.tableKeywords != ''">
+                FIND_IN_SET(#{param.tableKeywords},t1.table_keywords)
+            </if>
+            <if test="param.tableName != null and param.tableName != ''">
+                t1.table_name = #{param.tableName}
+            </if>
+            <if test="param.tableAlias != null and param.tableAlias != ''">
+                t1.table_alias = LIKE  CONCAT('%',#{param.tableAlias},'%')
+            </if>
+            <if test="param.tableScenario != null and param.tableScenario != ''">
+                t1.table_scenario = LIKE  CONCAT('%',#{param.tableScenario},'%')
+            </if>
+            <if test="param.updateFrequency != null and param.updateFrequency != ''">
+                FIND_IN_SET(#{param.updateFrequency},t1.update_frequency)
+            </if>
+            <if test="param.tableType != null and param.tableType != ''">
+                t1.table_type = #{param.tableType}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,65 @@
+package com.traffic;
+
+import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.traffic.entity.DwdTfcBasRdnetDsecroadCentPointInfo;
+import com.traffic.entity.DwdTfcBasRdnetDsecroadLinkTwokmInfo;
+import com.traffic.mapper.DwdTfcBasRdnetDsecroadCentPointInfoMapper;
+import com.traffic.service.DwdTfcBasRdnetDsecroadLinkTwokmInfoService;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@SpringBootTest
+class TrafficDataRecordApplicationTests {
+    @Resource
+    private DwdTfcBasRdnetDsecroadCentPointInfoMapper mapper;
+    @Resource
+    private DwdTfcBasRdnetDsecroadLinkTwokmInfoService service;
+
+    @Test
+    void contextLoads() {
+        //1.查询所有道路
+        LambdaQueryWrapper<DwdTfcBasRdnetDsecroadCentPointInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.isNotNull(DwdTfcBasRdnetDsecroadCentPointInfo::getCentPoint);
+        List<DwdTfcBasRdnetDsecroadCentPointInfo> infos = mapper.selectList(wrapper);
+
+        //2.遍历所有道路
+        for (DwdTfcBasRdnetDsecroadCentPointInfo info : infos) {
+            //3.构建目标对象
+            DwdTfcBasRdnetDsecroadLinkTwokmInfo linkTwokmInfo = new DwdTfcBasRdnetDsecroadLinkTwokmInfo();
+            //4.将属性拷贝到目标对象
+            BeanUtil.copyProperties(info,linkTwokmInfo);
+            //5.根据坐标去查询相关2000米的道路
+            List<DwdTfcBasRdnetDsecroadCentPointInfo> list = mapper.getLinks(info.getCentPoint());
+            //6.如何2000m范围内有匹配到
+            if (list != null && list.size() > 0){
+                //7.字符串拼接对象
+                StringBuilder sb = new StringBuilder();
+                //8.遍历循环匹配道路
+                for (int i = 0; i < list.size(); i++) {
+                    //9.获取道路
+                    DwdTfcBasRdnetDsecroadCentPointInfo centPointInfo = list.get(i);
+                    //9.获取道路ID
+                    String dsecroadId = centPointInfo.getDsecroadId();
+                    //10.拼接道路ID
+                    sb.append(dsecroadId);
+                    //11.如何不是最后一个，不需要拼接逗号
+                    if (i != list.size() - 1){
+                        sb.append(",");
+                    }
+                }
+                //12.将拼接好的属性设置到目标对象中
+                linkTwokmInfo.setLinkDsecroadId(sb.toString());
+                //13.存储到数据库
+                service.save(linkTwokmInfo);
+            }
+        }
+
+    }
+
+}
