@@ -3,14 +3,19 @@ package com.traffic;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.google.common.collect.Lists;
 import com.traffic.entity.DwdTfcBasRdnetDsecroadCentPointInfo;
 import com.traffic.entity.DwdTfcBasRdnetDsecroadLinkTwokmInfo;
+import com.traffic.entity.DwsHzjjzdMonitoryPoint;
 import com.traffic.mapper.DwdTfcBasRdnetDsecroadCentPointInfoMapper;
 import com.traffic.service.DwdTfcBasRdnetDsecroadLinkTwokmInfoService;
+import com.traffic.service.DwsHzjjzdMonitoryPointService;
+import com.traffic.utils.CoordinateUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +25,45 @@ class TrafficDataRecordApplicationTests {
     private DwdTfcBasRdnetDsecroadCentPointInfoMapper mapper;
     @Resource
     private DwdTfcBasRdnetDsecroadLinkTwokmInfoService service;
+    @Resource
+    private DwsHzjjzdMonitoryPointService dwsHzjjzdMonitoryPointService;
+
+
+    /**
+     * 将WGS84坐标系转GCJ02坐标系
+     */
+    @Test
+    public void test01(){
+        List<DwsHzjjzdMonitoryPoint> list = dwsHzjjzdMonitoryPointService.list();
+        List<DwsHzjjzdMonitoryPoint> objects = Lists.newArrayList();
+        for (DwsHzjjzdMonitoryPoint dwsHzjjzdMonitoryPoint : list) {
+            String longitude = dwsHzjjzdMonitoryPoint.getLongitude();//120
+            String latitude = dwsHzjjzdMonitoryPoint.getLatitude();//30
+            double[] doubles = CoordinateUtils.wgs84ToGcj02(Double.parseDouble(longitude),Double.parseDouble(latitude));
+            dwsHzjjzdMonitoryPoint.setLongitude(String.valueOf(doubles[0]));
+            dwsHzjjzdMonitoryPoint.setLatitude(String.valueOf(doubles[1]));
+            objects.add(dwsHzjjzdMonitoryPoint);
+        }
+
+        for (DwsHzjjzdMonitoryPoint object : objects) {
+            System.out.println(object);
+        }
+
+        dwsHzjjzdMonitoryPointService.saveOrUpdateBatch(objects);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void contextLoads() {
