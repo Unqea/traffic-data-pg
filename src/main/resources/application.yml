@@ -13,9 +13,17 @@ spring:
           username: postgres
           password: 123456
           driver-class-name: org.postgresql.Driver # 3.2.0开始支持SPI可省略此配置
+          lazy: true
         odps:
-          url: jdbc:odps:http://service.cn-hangzhou-hzegc-d01.odps.cloud.hzegcv3.cn/api?project=odps_hzsjtysj
+          url: jdbc:odps:http://service.cn-hangzhou-hzegc-d01.odps.ops.hzegcv3.cn/api?project=odps_hzsjtysj
           username: nalVftZFovXIPPu2
           password: I9EnkBrbzZVJUyWij0kmQLbTxnGBOu
           driver-class-name: com.aliyun.odps.jdbc.OdpsDriver
+          lazy: true
+
+        local:
+          url: jdbc:mysql://127.0.0.1:3306/a-jtj?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+          username: root
+          password: wasd62300
+          driver-class-name: com.mysql.jdbc.Driver
           lazy: true

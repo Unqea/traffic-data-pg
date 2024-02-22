@@ -1,32 +1,125 @@
 package com.traffic;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import cn.hutool.core.util.ObjUtil;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONUtil;
+import com.aliyun.odps.simpleframework.xml.transform.InvalidFormatException;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.google.common.collect.Lists;
 import com.traffic.entity.DwdTfcBasRdnetDsecroadCentPointInfo;
 import com.traffic.entity.DwdTfcBasRdnetDsecroadLinkTwokmInfo;
 import com.traffic.entity.DwsHzjjzdMonitoryPoint;
+import com.traffic.entity.ExcelBean;
 import com.traffic.mapper.DwdTfcBasRdnetDsecroadCentPointInfoMapper;
 import com.traffic.service.DwdTfcBasRdnetDsecroadLinkTwokmInfoService;
 import com.traffic.service.DwsHzjjzdMonitoryPointService;
+import com.traffic.service.ExcelBeanService;
+import com.traffic.service.LbsService;
 import com.traffic.utils.CoordinateUtils;
+import com.traffic.utils.MyExcelUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @SpringBootTest
-class TrafficDataRecordApplicationTests {
+class TrafficJsonDataRecordApplicationTests {
     @Resource
     private DwdTfcBasRdnetDsecroadCentPointInfoMapper mapper;
     @Resource
     private DwdTfcBasRdnetDsecroadLinkTwokmInfoService service;
     @Resource
     private DwsHzjjzdMonitoryPointService dwsHzjjzdMonitoryPointService;
+
+    @Resource
+    private LbsService lbsService;
+
+
+    @Resource
+    private ExcelBeanService excelBeanService;
+
+    @Test
+    public void test05() throws IOException, InvalidFormatException {
+        List<List<String>> lists = MyExcelUtil.readExcelData("/Users/yin/Downloads/cam.xlsx", "春运场景 (2)");
+        List<ExcelBean> excelBeans = new ArrayList<>();
+        JSONArray objects = JSONUtil.parseArray(lists);
+
+
+        for (Object object : objects) {
+            JSONArray objects1 = JSONUtil.parseArray(object);
+
+            if (objects1.size() == 7) {
+                if (objects1.get(0).equals("一级")){
+                    continue;
+                }
+                ExcelBean excelBean = new ExcelBean();
+                excelBean.setOne((String) objects1.get(0));
+                excelBean.setTwo((String) objects1.get(1));
+                excelBean.setThree((String) objects1.get(2));
+                excelBean.setNumber((String) objects1.get(3));
+                excelBean.setName((String) objects1.get(4));
+                excelBean.setCode((String) objects1.get(5));
+                excelBean.setNotes((String) objects1.get(6));
+                excelBeans.add(excelBean);
+            }
+        }
+
+        for (int i = 0; i < excelBeans.size(); i++) {
+
+            ExcelBean excelBean = excelBeans.get(i);
+            if (ObjUtil.isEmpty(excelBean.getOne())) {
+                excelBean.setOne(excelBeans.get(i - 1).getOne());
+            }
+            if (ObjUtil.isEmpty(excelBean.getTwo())) {
+                excelBean.setTwo(excelBeans.get(i - 1).getTwo());
+            }
+            if (ObjUtil.isEmpty(excelBean.getThree())) {
+                excelBean.setThree(excelBeans.get(i - 1).getThree());
+            }
+        }
+
+        for (ExcelBean excelBean : excelBeans) {
+            System.out.println(excelBean);
+        }
+
+        excelBeanService.saveBatch(excelBeans);
+    }
+
+
+
+    @Test
+    public void test04(){
+        List<String> res = new ArrayList<>();
+
+        List<String> tables = lbsService.allTables();
+
+        for (String table : tables) {
+            if (table.startsWith("dws") || table.startsWith("dwd")){
+                List<String> patt = null;
+                try {
+                    patt = lbsService.descTable(table);
+                }catch (RuntimeException e){
+                    continue;
+                }
+
+                for (String tab : patt) {
+                    if (tab.contains("source=lbs")){
+                        res.add(table);
+                        break;
+                    }
+                }
+            }
+        }
+
+        for (String re : res) {
+            System.out.println(re);
+        }
+
+    }
 
 
     /**

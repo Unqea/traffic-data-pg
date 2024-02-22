@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>坐标转换工具</title>
+    <script>
+        class CoordinateUtils {
+            static a = 6378245.0;
+            static ee = 0.00669342162296594323;
+
+            static wgs84ToGcj02(lng, lat) {
+                if (this.outOfChina(lng, lat)) {
+                    return [lng, lat];
+                }
+                let dLat = this.transformLat(lng - 105.0, lat - 35.0);
+                let dLng = this.transformLng(lng - 105.0, lat - 35.0);
+                let radLat = lat / 180.0 * Math.PI;
+                let magic = Math.sin(radLat);
+                magic = 1 - this.ee * magic * magic;
+                let sqrtMagic = Math.sqrt(magic);
+                dLat = (dLat * 180.0) / ((this.a * (1 - this.ee)) / (magic * sqrtMagic) * Math.PI);
+                dLng = (dLng * 180.0) / (this.a / sqrtMagic * Math.cos(radLat) * Math.PI);
+                let mgLat = lat + dLat;
+                let mgLng = lng + dLng;
+                return [mgLng, mgLat];
+            }
+
+            static outOfChina(lng, lat) {
+                return lng < 72.004 || lng > 137.8347 || lat < 0.8293 || lat > 55.8271;
+            }
+
+            static transformLat(lng, lat) {
+                let ret = -100.0 + 2.0 * lng + 3.0 * lat + 0.2 * lat * lat + 0.1 * lng * lat + 0.2 * Math.sqrt(Math.abs(lng));
+                ret += (20.0 * Math.sin(6.0 * lng * Math.PI) + 20.0 * Math.sin(2.0 * lng * Math.PI)) * 2.0 / 3.0;
+                ret += (20.0 * Math.sin(lat * Math.PI) + 40.0 * Math.sin(lat / 3.0 * Math.PI)) * 2.0 / 3.0;
+                ret += (160.0 * Math.sin(lat / 12.0 * Math.PI) + 320 * Math.sin(lat * Math.PI / 30.0)) * 2.0 / 3.0;
+                return ret;
+            }
+
+            static transformLng(lng, lat) {
+                let ret = 300.0 + lng + 2.0 * lat + 0.1 * lng * lng + 0.1 * lng * lat + 0.1 * Math.sqrt(Math.abs(lng));
+                ret += (20.0 * Math.sin(6.0 * lng * Math.PI) + 20.0 * Math.sin(2.0 * lng * Math.PI)) * 2.0 / 3.0;
+                ret += (20.0 * Math.sin(lng * Math.PI) + 40.0 * Math.sin(lng / 3.0 * Math.PI)) * 2.0 / 3.0;
+                ret += (150.0 * Math.sin(lng / 12.0 * Math.PI) + 300.0 * Math.sin(lng / 30.0 * Math.PI)) * 2.0 / 3.0;
+                return ret;
+            }
+        }
+
+        function convertCoordinates() {
+            let lng = parseFloat(document.getElementById('wgs84Lng').value);
+            let lat = parseFloat(document.getElementById('wgs84Lat').value);
+            let gcj02 = CoordinateUtils.wgs84ToGcj02(lng, lat);
+            document.getElementById('gcj02Lng').value = gcj02[0];
+            document.getElementById('gcj02Lat').value = gcj02[1];
+        }
+
+        // 原始 URL
+        let url = "http://172.18.91.192:8090/iserver/services/map-supMap-1/rest/maps/shp_%E5%85%AC%E4%BA%A4%E5%9C%BA%E7%AB%99/tileFeature.mvt?returnAttributes=true&width=512&height=512&viewBounds=120.234375,30.05859375,120.41015625,30.234375......";
+
+        // 提取 viewBounds 值
+        let regex = /viewBounds=([^&]+)/;
+        let matches = url.match(regex);
+        let viewBounds = matches[1];
+        let coordinatePairs = viewBounds.split(',');
+
+        // 转换坐标
+        let transformedCoordinates = [];
+        for (let i = 0; i < coordinatePairs.length; i += 2) {
+            let wgs84Lng = parseFloat(coordinatePairs[i]);
+            let wgs84Lat = parseFloat(coordinatePairs[i + 1]);
+            let gcj02Pt = CoordinateUtils.wgs84ToGcj02(wgs84Lng, wgs84Lat);
+            transformedCoordinates.push(`${gcj02Pt[0]},${gcj02Pt[1]}`);
+        }
+
+        // 构造新的 viewBounds 字符串
+        let newViewBounds = transformedCoordinates.join(',');
+
+        // 替换 URL 中的 viewBounds
+        url = url.replace(regex, `viewBounds=${newViewBounds}`);
+
+        console.log(url);
+
+
+    </script>
+</head>
+<body>
+<h2>WGS84到GCJ02坐标转换</h2>
+<div>
+    <label for="wgs84Lng">WGS84 经度:</label>
+    <input type="text" id="wgs84Lng" placeholder="经度">
+    <label for="wgs84Lat">WGS84 纬度:</label>
+    <input type="text" id="wgs84Lat" placeholder="纬度">
+</div>
+<button onclick="convertCoordinates()">转换</button>
+<div>
+    <label for="gcj02Lng">GCJ02 经度:</label>
+    <input type="text" id="gcj02Lng" placeholder="经度" readonly>
+    <label for="gcj02Lat">GCJ02 纬度:</label>
+    <input type="text" id="gcj02Lat" placeholder="纬度" readonly>
+</div>
+</body>
+</html>
