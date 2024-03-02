@@ -9,6 +9,12 @@ spring:
       strict: false #严格匹配数据源,默认false. true未匹配到指定数据源时抛异常,false使用默认数据源
       datasource:
         master:
+          url: jdbc:mysql://127.0.0.1:3306/traffic_test?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+          username: root
+          password: wasd62300
+          driver-class-name: com.mysql.jdbc.Driver
+          lazy: true
+        pg:
           url: jdbc:postgresql://127.0.0.1:5432/postgres?useUnicode=true&characterEncoding=UTF-8&relaxAutoCommit=true&useSSL=false
           username: postgres
           password: 123456
@@ -21,9 +27,4 @@ spring:
           driver-class-name: com.aliyun.odps.jdbc.OdpsDriver
           lazy: true
 
-        local:
-          url: jdbc:mysql://127.0.0.1:3306/a-jtj?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
-          username: root
-          password: wasd62300
-          driver-class-name: com.mysql.jdbc.Driver
-          lazy: true
+

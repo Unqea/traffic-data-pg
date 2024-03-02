@@ -2,16 +2,17 @@ package com.traffic;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
 import com.aliyun.odps.simpleframework.xml.transform.InvalidFormatException;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.google.common.collect.Lists;
-import com.traffic.entity.DwdTfcBasRdnetDsecroadCentPointInfo;
-import com.traffic.entity.DwdTfcBasRdnetDsecroadLinkTwokmInfo;
-import com.traffic.entity.DwsHzjjzdMonitoryPoint;
-import com.traffic.entity.ExcelBean;
+import com.traffic.entity.*;
+import com.traffic.mapper.ChangFaMapper;
 import com.traffic.mapper.DwdTfcBasRdnetDsecroadCentPointInfoMapper;
+import com.traffic.mapper.JingQuMapper;
+import com.traffic.mapper.LuKouMapper;
 import com.traffic.service.DwdTfcBasRdnetDsecroadLinkTwokmInfoService;
 import com.traffic.service.DwsHzjjzdMonitoryPointService;
 import com.traffic.service.ExcelBeanService;
@@ -38,9 +39,132 @@ class TrafficJsonDataRecordApplicationTests {
     @Resource
     private LbsService lbsService;
 
-
     @Resource
     private ExcelBeanService excelBeanService;
+
+
+    @Resource
+    private JingQuMapper jingQuMapper;
+
+    @Resource
+    private LuKouMapper luKouMapper;
+
+    @Resource
+    private ChangFaMapper changFaMapper;
+
+    @Test
+    public void test08() throws IOException, InvalidFormatException {
+        List<ChangFa> list = changFaMapper.getAll();
+        for (ChangFa luKou : list) {
+            String 成因 = luKou.get成因();
+            String 类别 = luKou.get类别();
+            String res = "";
+            if (StrUtil.isNotBlank(成因)){
+                if (成因.contains(",")){
+
+                    String[] chengyin = 成因.split(",");
+                    String[] leibie = 类别.split(",");
+                    for (int i = 0; i < chengyin.length; i++) {
+                        for (int i1 = 0; i1 < leibie.length; i1++) {
+                            if (i == i1){
+                                if (i + 1 == chengyin.length){
+                                    res = res + leibie[i] +chengyin[i1];
+                                    break;
+                                }
+                                res = res + leibie[i] +chengyin[i1] + ",";
+                                break;
+                            }
+                        }
+                    }
+
+                }else {
+                    res = res + 类别 + 成因;
+                }
+            }
+            luKou.set成因(res);
+        }
+
+        for (ChangFa changFa : list) {
+            System.out.println(changFa);
+        }
+    }
+
+    @Test
+    public void test07() throws IOException, InvalidFormatException {
+        List<LuKou> list = luKouMapper.getAll();
+        for (LuKou luKou : list) {
+            String 成因 = luKou.get成因();
+            String 类别 = luKou.get类别();
+            String res = "";
+            if (StrUtil.isNotBlank(成因)){
+                if (成因.contains(",")){
+
+                    String[] chengyin = 成因.split(",");
+                    String[] leibie = 类别.split(",");
+                    for (int i = 0; i < chengyin.length; i++) {
+                        for (int i1 = 0; i1 < leibie.length; i1++) {
+                            if (i == i1){
+                                if (i + 1 == chengyin.length){
+                                    res = res + leibie[i] +chengyin[i1];
+                                    break;
+                                }
+                                res = res + leibie[i] +chengyin[i1] + ",";
+                                break;
+                            }
+                        }
+                    }
+
+                }else {
+                    res = res + 类别 + 成因;
+                }
+            }
+            luKou.set成因(res);
+        }
+
+        for (LuKou luKou : list) {
+            System.out.println(luKou);
+        }
+    }
+
+    @Test
+    public void test06() throws IOException, InvalidFormatException {
+        List<JingQu> list = jingQuMapper.getAll();
+        for (JingQu jingQu : list) {
+            String 成因 = jingQu.get成因();
+            String 类别 = jingQu.get类别();
+            String res = "";
+            if (StrUtil.isNotBlank(成因)){
+                if (成因.contains(",")){
+
+                    String[] chengyin = 成因.split(",");
+                    String[] leibie = 类别.split(",");
+                    for (int i = 0; i < chengyin.length; i++) {
+                        for (int i1 = 0; i1 < leibie.length; i1++) {
+                            if (i == i1){
+                                if (i + 1 == chengyin.length){
+                                    res = res + leibie[i] +chengyin[i1];
+                                    break;
+                                }
+                                res = res + leibie[i] +chengyin[i1] + ",";
+                                break;
+                            }
+                        }
+                    }
+
+                }else {
+                    res = res + 类别 + 成因;
+                }
+            }
+
+            jingQu.set成因(res);
+        }
+
+        for (JingQu jingQu : list) {
+            System.out.println(jingQu);
+        }
+    }
+
+
 
     @Test
     public void test05() throws IOException, InvalidFormatException {
