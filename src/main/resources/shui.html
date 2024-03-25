@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动感水滴</title>
+    <style>
+        /* 清楚默认边距 */
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+
+        }
+        body{
+            width:100vw;
+            height: 100vh;
+            display: flex;
+            background-color: #63b9e4;
+            /* 设置主轴居中 */
+            justify-content: center;
+
+        }
+        /* 设置水滴的样式 */
+        /* 画出立体的感觉,就是需要不断地给他描绘阴影,高光等等 */
+        #water{
+            width:300px;
+            height: 300px;
+            border: 1px  #000;
+            margin-top: 200px;
+            border-radius: 50% 50% 58% 42% / 39% 48% 52% 61% ;
+            /* inset表示的就是内阴影,黑色后面的0.5表示的就是透明度 ,三个百分度所表示的分别是水平偏移动度,竖直方向偏移度,最后的就是模糊半径*/
+            /* 第二行所表示的就是外阴影 */
+            /* 给元素设置一个内阴影，阴影的水平位移为10px，垂直位移为20px，阴影模糊半径为30px，颜色为透明度为0.5的黑色。 */
+            box-shadow: inset 10px 20px 30px rgba(0,0,0,0.5),
+            10px 10px 20px rgba(0, 0,0, 0.3),
+            15px 15px 30px rgba(0, 0,0, 0.05),
+                /* 白色内阴影 */
+            inset -10px -10px 15px rgba(255,255,255,0.8);
+            /*动画绑定到water上面  */
+            /* 动画将持续4秒，以线性的方式无限次循环，每次反向播放。 */
+            animation: action 3s linear infinite alternate;
+
+        }
+        /* 设置水滴上面的两个小白 */
+        /* 用于显示水的小水花 */
+        #water::after{
+            content:'';
+            width: 20px;
+            height: 20px;
+            /* 绝对定位 */
+            position: absolute;
+            top: 240px;
+            left: 48%;
+            background-color: rgba(255,255,255,0.8);
+            border-radius: 50%;
+        }
+        #water::before{
+            content:'';
+            width: 10px;
+            height: 10px;
+            /* 绝对定位，不随着动画的移动而移动 */
+            position: absolute;
+            top: 265px;
+            left: 47%;
+            background-color: rgba(255,255,255,0.8);
+            border-radius: 50%;
+        }
+        /* 水滴晃动效果 */
+        /* 控制关键帧 */
+        /* 分别设置动画效果 */
+        @keyframes action{
+            25%{
+                border-radius:50% 50% 72% 28% / 47% 48% 52% 53% ;
+            }
+            50%{
+                border-radius:50% 50% 46% 54% / 53% 48% 52% 47% ;
+            }
+
+            100%{
+                border-radius:50% 50% 33% 67% / 65% 56% 44% 35%  ;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 案例div标签 -->
+<div id="water"></div>
+</body>
+</html>

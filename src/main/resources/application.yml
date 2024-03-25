@@ -9,6 +9,12 @@ spring:
       strict: false #严格匹配数据源,默认false. true未匹配到指定数据源时抛异常,false使用默认数据源
       datasource:
         master:
+          url: jdbc:mysql://10.54.37.81:13306/dwd_330100?useUnicode=true&characterEncoding=UTF-8&relaxAutoCommit=true&useSSL=false&rewriteBatchedStatements=true
+          username: sfzcrds_user
+          password: jtzlzxAAA1
+          driver-class-name: com.mysql.jdbc.Driver # 3.2.0开始支持SPI可省略此配置
+          lazy: true
+        local:
           url: jdbc:mysql://127.0.0.1:3306/traffic_test?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
           username: root
           password: wasd62300
@@ -26,5 +32,6 @@ spring:
           password: I9EnkBrbzZVJUyWij0kmQLbTxnGBOu
           driver-class-name: com.aliyun.odps.jdbc.OdpsDriver
           lazy: true
+
 
 

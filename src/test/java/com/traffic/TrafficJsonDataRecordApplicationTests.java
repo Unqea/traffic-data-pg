@@ -9,10 +9,7 @@ import com.aliyun.odps.simpleframework.xml.transform.InvalidFormatException;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.google.common.collect.Lists;
 import com.traffic.entity.*;
-import com.traffic.mapper.ChangFaMapper;
-import com.traffic.mapper.DwdTfcBasRdnetDsecroadCentPointInfoMapper;
-import com.traffic.mapper.JingQuMapper;
-import com.traffic.mapper.LuKouMapper;
+import com.traffic.mapper.*;
 import com.traffic.service.DwdTfcBasRdnetDsecroadLinkTwokmInfoService;
 import com.traffic.service.DwsHzjjzdMonitoryPointService;
 import com.traffic.service.ExcelBeanService;
@@ -26,6 +23,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 class TrafficJsonDataRecordApplicationTests {
@@ -51,6 +49,47 @@ class TrafficJsonDataRecordApplicationTests {
 
     @Resource
     private ChangFaMapper changFaMapper;
+
+    @Resource
+    private DwsChangFaMMapper dwsChangFaMMapper;
+
+    @Test
+    public void test09() throws IOException, InvalidFormatException {
+        List<DwsChangFaM> list = dwsChangFaMMapper.getAll();
+        List<DwsChangFaMVo> res = list.stream().map(
+                item -> {
+                    DwsChangFaMVo dwsChangFaMVo = new DwsChangFaMVo();
+                    BeanUtil.copyProperties(item,dwsChangFaMVo);
+                    String jamPeriod = dwsChangFaMMapper.getPeriod(item.get道路id());
+                    dwsChangFaMVo.set成因(jamPeriod);
+                    StringBuilder factorType = new StringBuilder();
+                    String reason = item.get成因();
+                    if (StrUtil.isBlank(reason)){
+                        return dwsChangFaMVo;
+                    }
+                    String[] split = reason.split(",");
+                    for (int i = 0; i < split.length; i++) {
+                        String s = split[i];
+                        String msg = s.split("】")[1];
+                        //1常规性拥堵2结构性拥堵3秩序性拥堵
+                        String type = dwsChangFaMMapper.getType(msg);
+                        if (i + 1 == split.length){
+                            factorType.append(type);
+                        }else {
+                            factorType.append(type).append(",");
+                        }
+                    }
+                    dwsChangFaMVo.set拥堵类型(factorType.toString());
+                    return dwsChangFaMVo;
+                }
+        ).collect(Collectors.toList());
+
+        for (DwsChangFaMVo re : res) {
+            System.out.println(re);
+        }
+
+    }
+
 
     @Test
     public void test08() throws IOException, InvalidFormatException {

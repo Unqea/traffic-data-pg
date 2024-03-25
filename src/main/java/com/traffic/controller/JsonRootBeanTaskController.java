@@ -1,13 +1,12 @@
 package com.traffic.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.traffic.common.ApiResult;
-import com.traffic.entity.ChangFa;
-import com.traffic.entity.JingQu;
-import com.traffic.entity.LuKou;
-import com.traffic.entity.TableProperties;
+import com.traffic.entity.*;
 import com.traffic.mapper.ChangFaMapper;
+import com.traffic.mapper.DwsChangFaMMapper;
 import com.traffic.mapper.JingQuMapper;
 import com.traffic.mapper.LuKouMapper;
 import com.traffic.param.TablePropertiesQueryParam;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("/json")
 @RestController
@@ -36,6 +36,56 @@ public class JsonRootBeanTaskController {
 
     @Resource
     private ChangFaMapper changFaMapper;
+
+    @Resource
+    private DwsChangFaMMapper dwsChangFaMMapper;
+
+    /**
+     * 获取
+     */
+    @GetMapping("yyy")
+    @ApiOperation(value = "yyy", notes = "yyy", response = TablePropertiesQueryVo.class)
+    public ApiResult<String> yyy(String yyy) throws Exception {
+        return ApiResult.ok("yyy");
+    }
+
+    /**
+     * 获取
+     */
+    @GetMapping("getYongdu")
+    @ApiOperation(value = "getYongdu", notes = "getYongdu", response = TablePropertiesQueryVo.class)
+    public ApiResult<DwsChangFaMVo> getYongdu() throws Exception {
+        List<DwsChangFaM> list = dwsChangFaMMapper.getAll();
+        List<DwsChangFaMVo> res = list.stream().map(
+                item -> {
+                    DwsChangFaMVo dwsChangFaMVo = new DwsChangFaMVo();
+                    BeanUtil.copyProperties(item,dwsChangFaMVo);
+                    String jamPeriod = dwsChangFaMMapper.getPeriod(item.get道路id());
+                    dwsChangFaMVo.set成因(jamPeriod);
+                    StringBuilder factorType = new StringBuilder();
+                    String reason = item.get成因();
+                    if (StrUtil.isBlank(reason)){
+                        return dwsChangFaMVo;
+                    }
+                    String[] split = reason.split(",");
+                    for (int i = 0; i < split.length; i++) {
+                        String s = split[i];
+                        String msg = s.split("】")[1];
+                        //1常规性拥堵2结构性拥堵3秩序性拥堵
+                        String type = dwsChangFaMMapper.getType(msg);
+                        if (i + 1 == split.length){
+                            factorType.append(type);
+                        }else {
+                            factorType.append(type).append(",");
+                        }
+                    }
+                    dwsChangFaMVo.set拥堵类型(factorType.toString());
+                    return dwsChangFaMVo;
+                }
+        ).collect(Collectors.toList());
+
+        return ApiResult.ok(res);
+    }
 
     /**
      * 获取
