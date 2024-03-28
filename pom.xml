@@ -24,6 +24,12 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.dtflys.forest</groupId>
+            <artifactId>forest-spring-boot-starter</artifactId>
+            <version>1.5.28</version>
+        </dependency>
+
         <!--spring-web-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

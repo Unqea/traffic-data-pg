@@ -1,11 +1,24 @@
 package com.traffic;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringJoiner;
+
 public class LeeCode {
     public static void main(String[] args) {
-        int[] nums = {3,3};
-        int target = 6;
-        int[] ints = twoSum(nums, target);
-        System.out.println(ints[0] + "," + ints[1]);
+        List<Integer> integers = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
+        StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
+        for (Integer num : integers) {
+            stringJoiner.add(String.valueOf(num));
+        }
+
+        String s = stringJoiner.toString();
+        System.out.println(s);
+
+        String str = "hello";
+        String a = "a";
+        String res = str + a;
+
     }
 
     public static int[] twoSum(int[] nums, int target) {
