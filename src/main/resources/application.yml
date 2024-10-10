@@ -1,24 +1,33 @@
 server:
   port: 8082
 spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password:
+    database: 0
+    lettuce:
+      pool:
+        max-idle: 16
+        max-active: 32
   resources:
     static-locations: classpath:/
   datasource:
     dynamic:
-      primary: master #设置默认的数据源或者数据源组,默认值即为master
+      primary: local #设置默认的数据源或者数据源组,默认值即为master
       strict: false #严格匹配数据源,默认false. true未匹配到指定数据源时抛异常,false使用默认数据源
       datasource:
+        local:
+          url: jdbc:mysql://127.0.0.1:3306/railwaycapacitydb?useUnicode=true&characterEncoding=UTF-8&relaxAutoCommit=true&useSSL=false
+          username: root
+          password: wasd62300
+          driver-class-name: com.mysql.jdbc.Driver
+          lazy: true
         master:
           url: jdbc:mysql://10.54.37.81:13306/dwd_330100?useUnicode=true&characterEncoding=UTF-8&relaxAutoCommit=true&useSSL=false&rewriteBatchedStatements=true
           username: sfzcrds_user
           password: jtzlzxAAA1
           driver-class-name: com.mysql.jdbc.Driver # 3.2.0开始支持SPI可省略此配置
-          lazy: true
-        local:
-          url: jdbc:mysql://127.0.0.1:3306/traffic_test?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
-          username: root
-          password: wasd62300
-          driver-class-name: com.mysql.jdbc.Driver
           lazy: true
         pg:
           url: jdbc:postgresql://127.0.0.1:5432/postgres?useUnicode=true&characterEncoding=UTF-8&relaxAutoCommit=true&useSSL=false
@@ -57,4 +66,7 @@ forest:
   log-response-content: true   # 打开/关闭Forest响应内容日志（默认为 false）
   async-mode: platform         # [自v1.5.27版本起可用] 异步模式（默认为 platform）
 
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
 

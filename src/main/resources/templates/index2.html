@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- 页面meta -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>新交通局数据信息记录系统</title>
+    <!-- Bootstrap -->
+    <link href="../static/css/bootstrap.css" rel="stylesheet">
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="../static/js/jquery-3.2.1.min.js"></script>
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+    <script src="../static/js/bootstrap.min.js"></script>
+    <!-- 引入组件库 -->
+    <script src="../static/js/vue.js"></script>
+    <script src="../static/js/axios-0.18.0.js"></script>
+    <style>
+        body{
+            background-color: #fcfcfc;
+        }
+        #image1{
+            width: 50px;
+            margin-left: 30px;
+            margin-top: 7px;
+        }
+        #image2{
+            width: 102%;
+            margin-left: -20px;
+        }
+
+        #icon1,#icon2,#icon3,#icon4{
+            width: 29px;
+            text-align: center;
+            margin-top: 50px;
+            margin-left: 15px;
+        }
+        #div1{
+            margin-top: 15px;
+            text-align: center;
+            font-size: 15px;
+            color: #e0e0e0;
+        }
+        .cl1{
+            margin-top: 40px;
+        }
+        .media-object{
+            width: 120px;
+        }
+        #footPage{
+            margin-top: 50px;
+        }
+        .media-body{
+            color: #f5f5f5;
+        }
+        #title{
+            margin-left: 150px;
+            margin-right: 150px;
+            margin-top: 40px;
+        }
+        #new_head{
+            font-size: 20px;
+            color: #e0e0e0;
+            cursor: pointer;
+        }
+        #new_head1,#new_head2,#new_head3,#new_head4{
+            color: #e0e0e0;
+            text-decoration: none;
+            width: 52px;
+            margin-top: 10px;
+            float: right;
+            margin-right: 59px;
+        }
+    </style>
+    <script>
+        window.onload = function (){
+            let vue = new Vue({
+                el:'#app',
+                data:{
+                    pagination: {//分页相关模型数据
+                        currentPage: 1,//当前页码
+                        pageSize:10,//每页显示的记录数
+                        total:0,//总条数
+                        pages:1//总页数
+                    },
+                    //请求参数
+                    tablePropertiesParam: {
+                        current:1,
+                        size:10,
+                        tableAlias:'',
+                        tableDescription:'',
+                        tableKeywords:'',
+                        tableName:'',
+                        tableScenario:'',
+                        tableType:'',
+                        updateFrequency:''
+                    },
+
+                    //返回参数
+                    tablePropertiesList: []
+                },
+                //钩子函数，VUE对象初始化完成后自动执行
+                created() {
+                    this.findPage();
+                },
+                methods:{
+                    //1.查询
+                    findPage() {
+                        const tablePropertiesParam = {
+                            current: 1,
+                            size: 10,
+                            tableAlias: '',
+                            tableDescription: '',
+                            tableKeywords: '',
+                            tableName: '',
+                            tableScenario: '',
+                            tableType: '',
+                            updateFrequency: ''
+                        };
+                        axios.post("/tableProperties/getPageList",tablePropertiesParam).then((res) =>{
+                            this.pagination.total = res.data.data.total;
+                            this.pagination.pages = res.data.data.pages;
+                            this.tablePropertiesList = res.data.data.records;
+                        });
+                    },
+
+                    selectList() {
+                        const tablePropertiesParam = {
+                            current: this.tablePropertiesParam.current,
+                            size: this.tablePropertiesParam.size,
+                            tableAlias: this.tablePropertiesParam.tableAlias,
+                            tableDescription:  this.tablePropertiesParam.tableDescription,
+                            tableKeywords: this.tablePropertiesParam.tableKeywords,
+                            tableName: this.tablePropertiesParam.tableName, // 使用表单输入的值
+                            tableScenario: this.tablePropertiesParam.tableScenario,
+                            tableType: this.tablePropertiesParam.tableType,
+                            updateFrequency: this.tablePropertiesParam.updateFrequency
+                        };
+                        axios.post("/tableProperties/getPageList",tablePropertiesParam).then((res) =>{
+                            this.tablePropertiesList = res.data.data.records;
+                            this.pagination.pageSize = res.data.data.size;
+                            this.pagination.total = res.data.data.total;
+                            this.pagination.pages = res.data.data.pages;
+                            this.pagination.currentPage = res.data.data.current;
+                        });
+                    },
+
+
+                    //2.分页参数查询
+                    findPageByPage(current,size,tableAlias,tableDescription,tableKeywords,tableName,tableScenario,tableType,updateFrequency) {
+                        this.tablePropertiesParam.current = current;
+                        this.tablePropertiesParam.size = size;
+                        this.tablePropertiesParam.tableAlias = tableAlias;
+                        this.tablePropertiesParam.tableDescription = tableDescription;
+                        this.tablePropertiesParam.tableKeywords = tableKeywords;
+                        this.tablePropertiesParam.tableName = tableName;
+                        this.tablePropertiesParam.tableScenario = tableScenario;
+                        this.tablePropertiesParam.tableType = tableType;
+                        this.tablePropertiesParam.updateFrequency = updateFrequency;
+                        axios.post("/tableProperties/getPageList",this.tablePropertiesParam).then((res) =>{
+                            this.tablePropertiesList = res.data.data.records;
+                            this.pagination.pageSize = res.data.data.size;
+                            this.pagination.total = res.data.data.total;
+                            this.pagination.pages = res.data.data.pages;
+                            this.pagination.currentPage = res.data.data.current;
+                        });
+                    },
+
+                    //3.下一页
+                    nextPage() {
+                        if (this.pagination.currentPage === this.pagination.pages){
+                            this.findPageByPage(
+                                //当前页是最后一页，不向下跳转
+                                this.pagination.pages,
+                                this.tablePropertiesParam.size,
+                                this.tablePropertiesParam.tableAlias,
+                                this.tablePropertiesParam.tableDescription,
+                                this.tablePropertiesParam.tableKeywords,
+                                this.tablePropertiesParam.tableName,
+                                this.tablePropertiesParam.tableScenario,
+                                this.tablePropertiesParam.tableType,
+                                this.tablePropertiesParam.updateFrequency
+                            );
+                            return;
+                        }
+                        this.findPageByPage(
+                            this.tablePropertiesParam.current + 1,
+                            this.tablePropertiesParam.size,
+                            this.tablePropertiesParam.tableAlias,
+                            this.tablePropertiesParam.tableDescription,
+                            this.tablePropertiesParam.tableKeywords,
+                            this.tablePropertiesParam.tableName,
+                            this.tablePropertiesParam.tableScenario,
+                            this.tablePropertiesParam.tableType,
+                            this.tablePropertiesParam.updateFrequency
+                        );
+                    },
+
+                    //4.上一页
+                    Previous() {
+                        if (this.pagination.currentPage === 1){
+                            //当前页是第一页，不向前跳转
+                            this.findPageByPage(
+                                1,
+                                this.tablePropertiesParam.size,
+                                this.tablePropertiesParam.tableAlias,
+                                this.tablePropertiesParam.tableDescription,
+                                this.tablePropertiesParam.tableKeywords,
+                                this.tablePropertiesParam.tableName,
+                                this.tablePropertiesParam.tableScenario,
+                                this.tablePropertiesParam.tableType,
+                                this.tablePropertiesParam.updateFrequency
+                            );
+                            return;
+                        }
+                        this.findPageByPage(
+                            this.tablePropertiesParam.current - 1,
+                            this.tablePropertiesParam.size,
+                            this.tablePropertiesParam.tableAlias,
+                            this.tablePropertiesParam.tableDescription,
+                            this.tablePropertiesParam.tableKeywords,
+                            this.tablePropertiesParam.tableName,
+                            this.tablePropertiesParam.tableScenario,
+                            this.tablePropertiesParam.tableType,
+                            this.tablePropertiesParam.updateFrequency
+                        );
+                    },
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div id="app">
+
+        <div class="container-fluid">
+            <div>
+                <div id="new_head">
+                    <a @click="findPage()"><img src="../static/images/traffic.png" class="img-circle" id="image1"></a>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <!--主题内容-->
+            <div class="container">
+                <!--搜索框-->
+                <div class="cl1">
+                    <form class="form-inline" @submit.prevent="selectList">
+                        <div class="form-group">
+                            <label for="tableName">新表名</label>
+                            <input type="text" class="form-control" id="tableName" placeholder="输入表名" name="tableName" v-model="tablePropertiesParam.tableName">
+                        </div>
+                        <div class="form-group">
+                            <label for="tableScenario">新场景</label>
+                            <input type="text" class="form-control" id="tableScenario" placeholder="输入场景" name="tableScenario" v-model="tablePropertiesParam.tableScenario">
+                        </div>
+                        <div class="form-group">
+                            <label for="tableKeywords">新标签</label>
+                            <input type="text" class="form-control" id="tableKeywords" placeholder="输入关键字" name="tableKeywords" v-model="tablePropertiesParam.tableKeywords">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tableType">新类型</label>
+                            <input type="text" class="form-control" id="tableType" placeholder="输入所属库类型" name="tableType" v-model="tablePropertiesParam.tableType">
+                        </div>
+                        <div class="form-group">
+                            <label for="tableAlias">新别名</label>
+                            <input type="text" class="form-control" id="tableAlias" placeholder="输入别名" name="tableAlias" v-model="tablePropertiesParam.tableAlias">
+                        </div>
+                        <div class="form-group">
+                            <label for="updateFrequency">新频率</label>
+                            <input type="text" class="form-control" id="updateFrequency" placeholder="输入更新频率" name="updateFrequency" v-model="tablePropertiesParam.updateFrequency">
+                        </div>
+                        <button type="submit" class="btn btn-default">新搜索</button>
+                    </form>
+
+                    <br>
+                    <!--列表-->
+                    <table class="table table-hover">
+                        <tr class="active">
+                            <td>新序号</td>
+                            <td>新表名</td>
+                            <td>新别名</td>
+                            <td>新场景</td>
+                            <td>新更新频率</td>
+                            <td>新所属库类型</td>
+                            <td>新表的描述</td>
+                            <td>新创建时间</td>
+                            <td>新更新时间</td>
+                            <td>新操作</td>
+                        </tr>
+                        <tr class="active" v-for="tableProperties in tablePropertiesList" :key="tableProperties.id">
+                            <td>{{tableProperties.id}}</td>
+                            <td>{{tableProperties.tableName}}</td>
+                            <td>{{tableProperties.tableAlias}}</td>
+                            <td>{{tableProperties.tableScenario}}</td>
+                            <td>{{tableProperties.updateFrequency}}</td>
+                            <td>{{tableProperties.tableType}}</td>
+                            <td>{{tableProperties.tableDescription}}</td>
+                            <td>{{tableProperties.creationTime}}</td>
+                            <td>{{tableProperties.updateTime}}</td>
+                            <td><button type="button">新修改</button>
+                                <button type="button">新删除</button></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid" style="text-align: center">
+            <!--分页条-->
+            <div id="footPage">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li>
+                            <a @click="Previous()" aria-label="Previous" style="cursor: pointer">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <!--current,size,tableAlias,tableDescription,tableKeywords,tableName,tableScenario,tableType,updateFrequency-->
+                        <li v-for="page in this.pagination.pages">
+                            <a @click="findPageByPage(page)" style="cursor: pointer">{{page}}</a>
+                        </li>
+                        <li>
+                            <a @click="nextPage()" aria-label="Next" style="cursor: pointer">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            <!--页尾-->
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <div id="div1">Copyright © 新交通局主页. ALL rights reserved.</div>
+        </div>
+    </div>
+</body>
+</html>

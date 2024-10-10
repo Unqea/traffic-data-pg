@@ -1,3 +1,4 @@
+/*
 package com.traffic.utils;
 
 import cn.hutool.core.util.ObjUtil;
@@ -21,7 +22,7 @@ public class MyExcelUtil {
         for (Object object : objects) {
             JSONArray objects1 = JSONUtil.parseArray(object);
             if (objects1.size() == 7) {
-                if (objects1.get(0).equals("一级")){
+                if (objects1.get(0).equals("一级")) {
                     continue;
                 }
                 ExcelBean excelBean = new ExcelBean();
@@ -57,7 +58,8 @@ public class MyExcelUtil {
 
     }
 
-    /**
+    */
+/**
      * 读取Excel数据
      *
      * @param filePath  文件路径
@@ -65,7 +67,8 @@ public class MyExcelUtil {
      * @return 以List<List < String>>形式返回Excel中的数据
      * @throws IOException
      * @throws InvalidFormatException
-     */
+     *//*
+
     public static List<List<String>> readExcelData(String filePath, String sheetName) throws IOException, InvalidFormatException {
         List<List<String>> data = new ArrayList<>();
         // 创建工作簿
@@ -109,3 +112,4 @@ public class MyExcelUtil {
         return data;
     }
 }
+*/

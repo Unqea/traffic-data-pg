@@ -30,6 +30,21 @@
             <version>1.5.28</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+
         <!--spring-web-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -116,7 +131,7 @@
         </dependency>
 
         <!--poi读取-->
-        <dependency>
+<!--        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>4.1.0</version>
@@ -125,34 +140,91 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>4.1.0</version>
-        </dependency>
-
-<!--        &lt;!&ndash; https://mvnrepository.com/artifact/jpcap/jpcap-macosx-native-deps &ndash;&gt;
-        <dependency>
-            <groupId>jpcap</groupId>
-            <artifactId>jpcap-macosx-native-deps</artifactId>
-            <version>0.1.18-002</version>
         </dependency>-->
 
-<!--
-        &lt;!&ndash; https://mvnrepository.com/artifact/jpcap/jpcap &ndash;&gt;
+
         <dependency>
-            <groupId>jpcap</groupId>
-            <artifactId>jpcap</artifactId>
-            <version>0.1.18-001</version>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.16</version>
         </dependency>
--->
-
-
-
-<!--
         <dependency>
-            <groupId>com.jpcap</groupId>
-            <artifactId>jpcap-sdk-java</artifactId>
-            <version>2.13.0-public</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/jpcap.jar</systemPath>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>ooxml-schemas</artifactId>
+            <version>1.3</version>
+        </dependency>
+
+        <!-- Apache POI for Word creation -->
+<!--        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version>
+        </dependency>
+
+        &lt;!&ndash; iText for PDF conversion &ndash;&gt;
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itext7-core</artifactId>
+            <version>7.2.4</version>
+        </dependency>
+
+        &lt;!&ndash; Or use PDFBox &ndash;&gt;
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.29</version>
         </dependency>-->
+
+
+
+        <dependency>
+            <groupId>com.aliyun.openservices</groupId>
+            <artifactId>tablestore</artifactId>
+            <version>5.16.0</version>
+            <classifier>jar-with-dependencies</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>protobuf-java</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpasyncclient</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin.external.google</groupId>
+            <artifactId>android-json</artifactId>
+            <version>0.0.20131108.vaadin1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--        &lt;!&ndash; https://mvnrepository.com/artifact/jpcap/jpcap-macosx-native-deps &ndash;&gt;
+                <dependency>
+                    <groupId>jpcap</groupId>
+                    <artifactId>jpcap-macosx-native-deps</artifactId>
+                    <version>0.1.18-002</version>
+                </dependency>-->
+
+        <!--
+                &lt;!&ndash; https://mvnrepository.com/artifact/jpcap/jpcap &ndash;&gt;
+                <dependency>
+                    <groupId>jpcap</groupId>
+                    <artifactId>jpcap</artifactId>
+                    <version>0.1.18-001</version>
+                </dependency>
+        -->
+
+
+        <!--
+                <dependency>
+                    <groupId>com.jpcap</groupId>
+                    <artifactId>jpcap-sdk-java</artifactId>
+                    <version>2.13.0-public</version>
+                    <scope>system</scope>
+                    <systemPath>${project.basedir}/lib/jpcap.jar</systemPath>
+                </dependency>-->
 
 
     </dependencies>

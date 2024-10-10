@@ -26,7 +26,7 @@ public class MonthDaysGenerator {
     }
     
     public static void main(String[] args) {
-        String month = "202312"; // 输入月份格式(yyyyMM)
+        String month = "202402"; // 输入月份格式(yyyyMM)
         String daysInMonth = generateDaysInMonth(month);
         System.out.println(daysInMonth);
     }

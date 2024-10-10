@@ -1,0 +1,11 @@
+package com.traffic.service.impl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.traffic.entity.TempDwsTfcWideTfcdlineTfcunitLevelInfo;
+import com.traffic.mapper.TempDwsTfcWideTfcdlineTfcunitLevelInfoMapper;
+import com.traffic.service.TempDwsTfcWideTfcdlineTfcunitLevelInfoService;
+import org.springframework.stereotype.Service;
+
+@Service
+public class TempDwsTfcWideTfcdlineTfcunitLevelInfoServiceImpl extends ServiceImpl<TempDwsTfcWideTfcdlineTfcunitLevelInfoMapper, TempDwsTfcWideTfcdlineTfcunitLevelInfo> implements TempDwsTfcWideTfcdlineTfcunitLevelInfoService  {
+}
