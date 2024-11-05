@@ -1,0 +1,11 @@
+package com.traffic.service.impl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.traffic.entity.DwdTfcBasRdnetDsecroadWithCameraInfo;
+import com.traffic.mapper.DwdTfcBasRdnetDsecroadWithCameraInfoMapper;
+import com.traffic.service.DwdTfcBasRdnetDsecroadWithCameraInfoService;
+import org.springframework.stereotype.Service;
+
+@Service
+public class DwdTfcBasRdnetDsecroadWithCameraInfoServiceImpl extends ServiceImpl<DwdTfcBasRdnetDsecroadWithCameraInfoMapper, DwdTfcBasRdnetDsecroadWithCameraInfo> implements DwdTfcBasRdnetDsecroadWithCameraInfoService {
+}

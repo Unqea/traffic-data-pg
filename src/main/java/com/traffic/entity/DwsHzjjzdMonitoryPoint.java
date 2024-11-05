@@ -1,26 +1,35 @@
 package com.traffic.entity;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 public class DwsHzjjzdMonitoryPoint {
-    private String smid;
+    private Long smid;
     private String smuserid;
     private String smgeometry;
-    private String objectid_1;
+    private String objectidOne;
     private String id;
     private String objectid;
-    private String index_code;
-    private String region_index_code;
+
+    @ApiModelProperty(value = "监控编号")
+    private String indexCode;
+
+    private String regionIndexCode;
     private String name;
+
+    @ApiModelProperty(value = "经度")
     private String longitude;
+
+    @ApiModelProperty(value = "纬度")
     private String latitude;
-    private String camera_type;
-    private String resource_type;
-    private String region_name;
+
+    private String cameraType;
+    private String resourceType;
+    private String regionName;
     private String remark;
-    private String create_time;
-    private String update_time;
+    private String createTime;
+    private String updateTime;
     private String title;
 
 

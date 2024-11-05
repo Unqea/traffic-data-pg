@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>试题展示</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        .correct { color: green; }
+        .incorrect { color: red; }
+        .question-section { margin-bottom: 20px; }
+        .question { font-weight: bold; }
+    </style>
+</head>
+<body>
+<h1>试题展示</h1>
+<input type="file" id="fileInput" accept=".xlsx, .xls" />
+<div id="content"></div>
+
+<script>
+    document.getElementById('fileInput').addEventListener('change', handleFile, false);
+
+    function handleFile(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+
+            // 读取每个sheet并生成HTML
+            const sheetNames = ['单选题', '多选题', '判断题'];
+            let htmlContent = '';
+
+            sheetNames.forEach(sheetName => {
+                const worksheet = workbook.Sheets[sheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                htmlContent += `<div class="question-section"><h2>${sheetName}</h2>`;
+
+                jsonData.slice(1).forEach(row => {
+                    const [id, answer, question, ...options] = row;
+
+                    // 检查是否有有效的序号和问题
+                    if (id && question) { // 只在 id 和 question 都存在时才处理
+                        // 检查是否存在 "或" 或多个答案（适用于多选题）
+                        const isUncertainAnswer = answer && answer.includes('或');
+                        const answerList = answer ? answer.split(/或|/).filter(Boolean) : []; // 根据“或”或直接拆分为多答案数组，并过滤空值
+
+                        // 对于不确定答案或多答案的情况，将答案显示在标题后面
+                        /*const answerDisplay = isUncertainAnswer ? ` (${answer})` : '';*/
+                        const answerDisplay = isUncertainAnswer ? ` (${answer})` : ` (${answer})`;
+                        htmlContent += `<div class="question"> ${id}: ${question}${answerDisplay}</div>`;
+
+                        // 循环展示选项
+                        options.forEach((option, index) => {
+                            if (option) {
+                                const optionLabel = String.fromCharCode(65 + index); // Convert index to A, B, C, etc.
+                                const isCorrect = answerList.includes(optionLabel); // 是否为正确答案
+                                const cssClass = isCorrect ? 'correct' : 'incorrect';
+
+                                htmlContent += `<div class="${cssClass}">  ${option}</div>`;
+                            }
+                        });
+                        htmlContent += '<br>';
+                    }
+                });
+
+                htmlContent += '</div>';
+            });
+
+            document.getElementById('content').innerHTML = htmlContent;
+        };
+
+        reader.readAsArrayBuffer(file);
+    }
+</script>
+</body>
+</html>
