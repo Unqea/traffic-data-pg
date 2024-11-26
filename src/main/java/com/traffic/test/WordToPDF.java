@@ -1,3 +1,4 @@
+/*
 package com.traffic.test;
 
 import org.apache.poi.xwpf.usermodel.*;
@@ -46,38 +47,38 @@ public class WordToPDF {
 
 
             //第一行
-            setFontType(table.getRow(0).getCell(0).getParagraphs().get(0).createRun(),"报告单位（部门）",8,"宋体");
-            setFontType(table.getRow(0).getCell(1).getParagraphs().get(0).createRun(),"负责人",8,"宋体");
-            setFontType(table.getRow(0).getCell(2).getParagraphs().get(0).createRun(),"报告时间",8,"宋体");
-            setFontType(table.getRow(0).getCell(3).getParagraphs().get(0).createRun(),"初步评估等级",8,"宋体");
-            setFontType(table.getRow(0).getCell(4).getParagraphs().get(0).createRun(),"评估时间",8,"宋体");
-            setFontType(table.getRow(0).getCell(5).getParagraphs().get(0).createRun(),"报告联系人及电话",8,"宋体");
+            setFontType(table.getRow(0).getCell(0).getParagraphs().get(0).createRun(), "报告单位（部门）", 8, "宋体");
+            setFontType(table.getRow(0).getCell(1).getParagraphs().get(0).createRun(), "负责人", 8, "宋体");
+            setFontType(table.getRow(0).getCell(2).getParagraphs().get(0).createRun(), "报告时间", 8, "宋体");
+            setFontType(table.getRow(0).getCell(3).getParagraphs().get(0).createRun(), "初步评估等级", 8, "宋体");
+            setFontType(table.getRow(0).getCell(4).getParagraphs().get(0).createRun(), "评估时间", 8, "宋体");
+            setFontType(table.getRow(0).getCell(5).getParagraphs().get(0).createRun(), "报告联系人及电话", 8, "宋体");
 
             //第二行(内容待填充)
-            setFontType(table.getRow(1).getCell(0).getParagraphs().get(0).createRun(),"",8,"宋体");
-            setFontType(table.getRow(1).getCell(1).getParagraphs().get(0).createRun(),"",8,"宋体");
-            setFontType(table.getRow(1).getCell(2).getParagraphs().get(0).createRun(),"",8,"宋体");
-            setFontType(table.getRow(1).getCell(3).getParagraphs().get(0).createRun(),"",8,"宋体");
-            setFontType(table.getRow(1).getCell(4).getParagraphs().get(0).createRun(),"",8,"宋体");
-            setFontType(table.getRow(1).getCell(5).getParagraphs().get(0).createRun(),"",8,"宋体");
+            setFontType(table.getRow(1).getCell(0).getParagraphs().get(0).createRun(), "", 8, "宋体");
+            setFontType(table.getRow(1).getCell(1).getParagraphs().get(0).createRun(), "", 8, "宋体");
+            setFontType(table.getRow(1).getCell(2).getParagraphs().get(0).createRun(), "", 8, "宋体");
+            setFontType(table.getRow(1).getCell(3).getParagraphs().get(0).createRun(), "", 8, "宋体");
+            setFontType(table.getRow(1).getCell(4).getParagraphs().get(0).createRun(), "", 8, "宋体");
+            setFontType(table.getRow(1).getCell(5).getParagraphs().get(0).createRun(), "", 8, "宋体");
 
             //第三行
-            setFontType(table.getRow(2).getCell(0).getParagraphs().get(0).createRun(),"隐患来源：自行排查□ 上级检查□ 行业监管部门督办□ 地方政府有关部门督办□",8,"宋体");
+            setFontType(table.getRow(2).getCell(0).getParagraphs().get(0).createRun(), "隐患来源：自行排查□ 上级检查□ 行业监管部门督办□ 地方政府有关部门督办□", 8, "宋体");
             //第四行
-            setFontType(table.getRow(3).getCell(0).getParagraphs().get(0).createRun(),"隐患性质：重大隐患□ 需公司协调解决□",8,"宋体");
+            setFontType(table.getRow(3).getCell(0).getParagraphs().get(0).createRun(), "隐患性质：重大隐患□ 需公司协调解决□", 8, "宋体");
             //第五行
-            setFontType(table.getRow(4).getCell(0).getParagraphs().get(0).createRun(),"隐患现状和产生原因：",8,"宋体");
+            setFontType(table.getRow(4).getCell(0).getParagraphs().get(0).createRun(), "隐患现状和产生原因：", 8, "宋体");
             //第六行
-            setFontType(table.getRow(5).getCell(0).getParagraphs().get(0).createRun(),"隐患的危害程度及影响范围：",8,"宋体");
+            setFontType(table.getRow(5).getCell(0).getParagraphs().get(0).createRun(), "隐患的危害程度及影响范围：", 8, "宋体");
             //第七行
-            setFontType(table.getRow(6).getCell(0).getParagraphs().get(0).createRun(),"隐患防控措施：",8,"宋体");
+            setFontType(table.getRow(6).getCell(0).getParagraphs().get(0).createRun(), "隐患防控措施：", 8, "宋体");
             //第八行
-            setFontType(table.getRow(7).getCell(0).getParagraphs().get(0).createRun(),"隐患整改措施及计划：",8,"宋体");
+            setFontType(table.getRow(7).getCell(0).getParagraphs().get(0).createRun(), "隐患整改措施及计划：", 8, "宋体");
             //第九行
-            setFontType(table.getRow(8).getCell(0).getParagraphs().get(0).createRun(),"应急预案简述：",8,"宋体");
+            setFontType(table.getRow(8).getCell(0).getParagraphs().get(0).createRun(), "应急预案简述：", 8, "宋体");
 
             //合并单元格
-            mergeCell(table,0,5, 2,3,4,5,6,7,8);
+            mergeCell(table, 0, 5, 2, 3, 4, 5, 6, 7, 8);
 
 
             // 保存Word文档
@@ -92,22 +93,24 @@ public class WordToPDF {
     }
 
 
-
     //设置字体大小、格式、内容
-    private static void setFontType(XWPFRun run, String text, int fontSize, String fontFamily){
+    private static void setFontType(XWPFRun run, String text, int fontSize, String fontFamily) {
         run.setFontSize(fontSize);
         run.setFontFamily(fontFamily);
         run.setText(text);
     }
 
-    /**
+    */
+/**
      * 合并单元格
-     * @param table 表
+     *
+     * @param table    表
      * @param fromCell 从第几列
-     * @param toCell 到几列
-     * @param row 行
-     */
-    private static void mergeCell(XWPFTable table, int fromCell, int toCell,  int ... row ){
+     * @param toCell   到几列
+     * @param row      行
+     *//*
+
+    private static void mergeCell(XWPFTable table, int fromCell, int toCell, int... row) {
         for (int i : row) {
             mergeCellsHorizontal(table, i, 0, 5);
         }
@@ -136,5 +139,5 @@ public class WordToPDF {
     }
 
 
-
 }
+*/

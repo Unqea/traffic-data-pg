@@ -9,10 +9,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.traffic.entity.*;
 import com.traffic.mapper.DwdTfcBasRdnetDsecroadWithCameraInfoMapper;
-import com.traffic.service.DwdTfcBasRdnetDsecroadInfoService;
-import com.traffic.service.DwdTfcBasRdnetDsecroadWithCameraInfoService;
-import com.traffic.service.DwdTfcRltnWideDsecroadCameraInfoService;
-import com.traffic.service.DwsHzjjzdMonitoryPointService;
+import com.traffic.service.*;
 import com.traffic.utils.CoordinateExtractor;
 import com.traffic.utils.DistanceCalculator;
 import com.traffic.vo.CameraIndex;
@@ -23,6 +20,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 class CameraCode {
@@ -37,6 +35,92 @@ class CameraCode {
     private DwdTfcRltnWideDsecroadCameraInfoService dwdTfcRltnWideDsecroadCameraInfoService;
     @Resource
     private DwdTfcBasRdnetDsecroadWithCameraInfoMapper dwdTfcBasRdnetDsecroadWithCameraInfoMapper;
+    @Resource
+    private DwdTfcRltnWideDsecroadCameraInfoCopyService dwdTfcRltnWideDsecroadCameraInfoCopyService;
+
+    @Test
+    public void dlc() {
+        // 定义每页的条数
+        int pageSize = 1000;
+        int currentPage = 1;
+        //新数据
+        List<Scenarios> scenarios  =  dwdTfcBasRdnetDsecroadWithCameraInfoMapper.getScenarios();
+        while (true){
+            Page<DwdTfcRltnWideDsecroadCameraInfo> page = new Page<>(currentPage, pageSize);
+            LambdaQueryWrapper<DwdTfcRltnWideDsecroadCameraInfo> roadWrapper = new LambdaQueryWrapper<>();
+            roadWrapper.eq(DwdTfcRltnWideDsecroadCameraInfo::getDataVersion, "20230930");
+            IPage<DwdTfcRltnWideDsecroadCameraInfo> roadPage = dwdTfcRltnWideDsecroadCameraInfoService.page(page, roadWrapper);
+            //旧数据
+            List<DwdTfcRltnWideDsecroadCameraInfo> roadList = roadPage.getRecords();
+            // 判断是否有数据
+            if (CollUtil.isEmpty(roadList)) {
+                break; // 如果没有数据了，跳出循环
+            }
+            //需要提交的数据
+            List<DwdTfcRltnWideDsecroadCameraInfoCopy> infos = new ArrayList<>();
+
+            for (DwdTfcRltnWideDsecroadCameraInfo info : roadList) {
+                //创建目标对象
+                DwdTfcRltnWideDsecroadCameraInfoCopy cameraInfoCopy = new DwdTfcRltnWideDsecroadCameraInfoCopy();
+                //拷贝其他属性
+                BeanUtil.copyProperties(info, cameraInfoCopy);
+
+                //======处理监控数据开始======
+                List<CameraIndex> cameraIndices = new ArrayList<>();
+                if (StrUtil.isNotBlank(info.getIndexCodeInfo())){
+                    cameraIndices = JSONUtil.toList(info.getIndexCodeInfo(), CameraIndex.class);
+                    List<String> codes = cameraIndices.stream().map(CameraIndex::getIndexCode).collect(Collectors.toList());
+                    for (Scenarios scenario : scenarios) {
+                        if (info.getDsecroadId().equals(scenario.getTfcdlineId()) && !codes.contains(scenario.getIndexCode())){
+                            CameraIndex cameraIndex = new CameraIndex();
+                            cameraIndex.setCameraName(scenario.getVideoName());
+                            cameraIndex.setIndexCode(scenario.getIndexCode());
+                            cameraIndex.setLatitude(scenario.getLatitude());
+                            cameraIndex.setLongitude(scenario.getLongitude());
+                            cameraIndices.add(cameraIndex);
+                            System.out.println("=====旧的=====" + info.getDsecroadId() + "=====旧的=====" );
+                        }
+                    }
+                }else {
+                    for (Scenarios scenario : scenarios) {
+                        if (info.getDsecroadId().equals(scenario.getTfcdlineId())){
+                            CameraIndex cameraIndex = new CameraIndex();
+                            cameraIndex.setCameraName(scenario.getVideoName());
+                            cameraIndex.setIndexCode(scenario.getIndexCode());
+                            cameraIndex.setLatitude(scenario.getLatitude());
+                            cameraIndex.setLongitude(scenario.getLongitude());
+                            cameraIndices.add(cameraIndex);
+                            System.out.println("=====新的=====" + info.getDsecroadId() + "=====新的=====" );
+                        }
+                    }
+                }
+                if (CollUtil.isNotEmpty(cameraIndices)){
+                    cameraInfoCopy.setIndexCodeInfo(JSONUtil.toJsonStr(cameraIndices));
+                }
+                //======处理监控数据结束======
+
+
+                infos.add(cameraInfoCopy);
+            }
+
+            boolean success = dwdTfcRltnWideDsecroadCameraInfoCopyService.saveBatch(infos);
+            infos.clear(); // 提交后清空列表
+
+            if (!success) {
+                System.out.println("数据提交失败，分页：" + currentPage);
+                break;
+            }
+
+            // 判断是否到最后一页
+            if (roadPage.getPages() <= currentPage) {
+                break;
+            }
+            // 更新到下一页
+            currentPage++;
+
+        }
+    }
+
 
 
 
